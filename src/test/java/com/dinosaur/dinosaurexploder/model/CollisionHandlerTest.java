@@ -149,14 +149,14 @@ class CollisionHandlerTest {
     }
 
     @Test
-    void playerLife_canDropBelowZero_butShouldBePrevented() {
+    void playerLife_ShouldNotDropBelowZero() {
         LifeComponent lifeComponent = new LifeComponent(); //3hp MAX
         collisionHandler.getDamagedPlayerLife(lifeComponent); //2hp
         collisionHandler.getDamagedPlayerLife(lifeComponent); //1hp
         collisionHandler.getDamagedPlayerLife(lifeComponent); //0hp
         collisionHandler.getDamagedPlayerLife(lifeComponent); //0hp? LOWEST
 
-        assertEquals(-1, lifeComponent.getLife()); //Bug: Life can be negative, but should stop at zero
+        assertEquals(0, lifeComponent.getLife()); //Bug: Life can be negative, but should stop at zero
     }
 
 }
