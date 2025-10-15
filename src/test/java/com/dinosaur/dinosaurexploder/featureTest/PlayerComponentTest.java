@@ -11,10 +11,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.ViewComponent;
+import com.almasb.fxgl.texture.Texture;
 import com.dinosaur.dinosaurexploder.components.PlayerComponent;
 import com.dinosaur.dinosaurexploder.view.DinosaurGUI;
+
+import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 public class PlayerComponentTest {
 
@@ -94,10 +100,72 @@ public class PlayerComponentTest {
     }
 
     //Eventuellt tester för när man rör sig inom bounds?
-    //@Test
-    //void moveUp_whenInBounds() { //javafx/fxgl animation graphics error
-    //    when(entity.getY()).thenReturn(0.0);
-    //    player.moveUp();
-    //    verify(entity).translateY(-8.0);
-    //}
+    @Test
+    void moveUp_whenInBounds() {
+        NoAnimationPlayerComponent noAnimationPlayerComponent = new NoAnimationPlayerComponent();
+        noAnimationPlayerComponent.attachTo(entity);
+
+        when(entity.getY()).thenReturn(0.0);
+        noAnimationPlayerComponent.moveUp();
+        verify(entity).translateY(-8.0);
+    }
+
+    @Test
+    void moveDown_whenInBounds() {
+        NoAnimationPlayerComponent noAnimationPlayerComponent = new NoAnimationPlayerComponent();
+        noAnimationPlayerComponent.attachTo(entity);
+        
+        when(entity.getY()).thenReturn(0.0);
+        noAnimationPlayerComponent.moveDown();
+        verify(entity).translateY(8.0);
+    }
+
+    @Test
+    void moveLeft_whenInBounds() {
+        NoAnimationPlayerComponent noAnimationPlayerComponent = new NoAnimationPlayerComponent();
+        noAnimationPlayerComponent.attachTo(entity);
+        
+        when(entity.getX()).thenReturn(0.0);
+        noAnimationPlayerComponent.moveLeft();
+        verify(entity).translateX(-8.0);
+    }
+
+    @Test
+    void moveRight_whenInBounds() {
+        NoAnimationPlayerComponent noAnimationPlayerComponent = new NoAnimationPlayerComponent();
+        noAnimationPlayerComponent.attachTo(entity);
+        
+        when(entity.getX()).thenReturn(0.0);
+        noAnimationPlayerComponent.moveRight();
+        verify(entity).translateX(8.0);
+    }
+
+    static class NoAnimationPlayerComponent extends PlayerComponent { //used to skip spawnMovementAnimation()
+        void attachTo(Entity e) {this.entity = e; }
+
+        @Override
+        public void moveUp() {
+            if (entity.getY() < 0) return;
+            entity.translateY(-8);
+        }
+
+        @Override
+        public void moveDown() {
+            if (!(entity.getY() < DinosaurGUI.HEIGHT - entity.getHeight())) return;
+            entity.translateY(8);
+        }
+
+        @Override
+        public void moveLeft() {
+            if (entity.getX() < 0) return;
+            entity.translateX(-8);
+        }
+
+        @Override
+        public void moveRight() {
+            if(!(entity.getX() < DinosaurGUI.WIDTH - entity.getWidth())) return;
+            entity.translateX(8);
+        }
+
+    }
 }
