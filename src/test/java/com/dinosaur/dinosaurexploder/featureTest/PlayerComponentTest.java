@@ -5,22 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.ViewComponent;
-import com.almasb.fxgl.texture.Texture;
 import com.dinosaur.dinosaurexploder.components.PlayerComponent;
 import com.dinosaur.dinosaurexploder.view.DinosaurGUI;
-
-import javafx.scene.image.Image;
-import javafx.util.Duration;
 
 public class PlayerComponentTest {
 
@@ -37,18 +30,17 @@ public class PlayerComponentTest {
     @BeforeEach
     void setup() {
         player = new TestPlayerComponent();
-
-        entity = mock(Entity.class, RETURNS_DEEP_STUBS);
+        entity = mock(Entity.class);
         viewComponent = mock(ViewComponent.class); 
 
         when(entity.getViewComponent()).thenReturn(viewComponent);
-        when(entity.getWidth()).thenReturn(50.0); //Example width
-        when(entity.getHeight()).thenReturn(50.0); //Example height
+        when(entity.getWidth()).thenReturn(50.0);
+        when(entity.getHeight()).thenReturn(50.0);
 
         player.attachTo(entity); //Attach the mocked entity to the player
     }
 
-    @Test //kanske ta bort eftersom inte används men kan vara relevant för rapport som hittad bug eller vidar utveckling
+    @Test //Game logic not in use
     void invincibleModeChangesOpacity() {
         player.setInvincible(true);
 
@@ -56,7 +48,7 @@ public class PlayerComponentTest {
         verify(viewComponent).setOpacity(0.5);
     }
 
-    @Test //Samma kommentar som ovan
+    @Test //-||-
     void invincibleModeRestoresOpacity() {
         player.setInvincible(true);
         player.setInvincible(false);
@@ -69,6 +61,7 @@ public class PlayerComponentTest {
     void moveUpStopsAtTop() {
         when(entity.getY()).thenReturn(-0.1);
         player.moveUp();
+
         verify(entity, never()).translateY(anyDouble());
     }
 
@@ -86,6 +79,7 @@ public class PlayerComponentTest {
     void moveLeftStopsAtLeftEdge() {
         when(entity.getX()).thenReturn(-0.1);
         player.moveLeft();
+        
         verify(entity,never()).translateX(anyDouble());
     }
 
@@ -99,7 +93,6 @@ public class PlayerComponentTest {
         verify(entity,never()).translateX(anyDouble());
     }
 
-    //Eventuellt tester för när man rör sig inom bounds?
     @Test
     void moveUp_whenInBounds() {
         NoAnimationPlayerComponent noAnimationPlayerComponent = new NoAnimationPlayerComponent();
