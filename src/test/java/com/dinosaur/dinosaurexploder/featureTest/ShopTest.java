@@ -1,19 +1,22 @@
 package com.dinosaur.dinosaurexploder.featureTest;
 
 import com.dinosaur.dinosaurexploder.exception.LockedShipException;
+import com.dinosaur.dinosaurexploder.exception.LockedWeaponException;
 import com.dinosaur.dinosaurexploder.model.HighScore;
 import com.dinosaur.dinosaurexploder.model.TotalCoins;
 import com.dinosaur.dinosaurexploder.utils.DataProvider;
 import com.dinosaur.dinosaurexploder.utils.ShipUnlockChecker;
+import com.dinosaur.dinosaurexploder.utils.WeaponUnlockChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/**
- * Tests for ShipUnlockChecker verifying unlock logic using coins and high scores.
- * Adjusted to work independently of LanguageManager translations.
- */
+
+
 public class ShopTest {
 
     private ShipUnlockChecker shipChecker;
@@ -88,4 +91,51 @@ public class ShopTest {
         dataProvider.setTotalCoins(0);
         assertDoesNotThrow(() -> shipChecker.check(1));
     }
+
+    @Test
+    void weaponUnlocks_whenHighScoreAndCoinsAreEnough() {
+        dataProvider.setHighScore(150);
+        dataProvider.setTotalCoins(10);
+        WeaponUnlockChecker weaponChecker = new WeaponUnlockChecker(dataProvider);
+        assertDoesNotThrow(() -> weaponChecker.check(3));
+    }
+
+    @Test
+    void weaponLocked_whenLowScoreButEnoughCoins() {
+        dataProvider.setHighScore(50);
+        dataProvider.setTotalCoins(10);
+        WeaponUnlockChecker weaponChecker = new WeaponUnlockChecker(dataProvider);
+        LockedWeaponException ex = assertThrows(LockedWeaponException.class, () -> weaponChecker.check(3));
+        assertNotNull(ex.getMessage());
+        assertFalse(ex.getMessage().isEmpty());
+    }
+
+    @Test
+    void weaponLocked_whenEnoughScoreButLowCoins() {
+        dataProvider.setHighScore(150);
+        dataProvider.setTotalCoins(5);
+        WeaponUnlockChecker weaponChecker = new WeaponUnlockChecker(dataProvider);
+        LockedWeaponException ex = assertThrows(LockedWeaponException.class, () -> weaponChecker.check(3));
+        assertNotNull(ex.getMessage());
+        assertFalse(ex.getMessage().isEmpty());
+    }
+
+    @Test
+    void weaponLocked_whenLowScoreAndLowCoins() {
+        dataProvider.setHighScore(50);
+        dataProvider.setTotalCoins(5);
+        WeaponUnlockChecker weaponChecker = new WeaponUnlockChecker(dataProvider);
+        LockedWeaponException ex = assertThrows(LockedWeaponException.class, () -> weaponChecker.check(3));
+        assertNotNull(ex.getMessage());
+        assertFalse(ex.getMessage().isEmpty());
+    }
+
+    @Test
+    void weaponUnlocks_whenNoRequirements() {
+        dataProvider.setHighScore(0);
+        dataProvider.setTotalCoins(0);
+        WeaponUnlockChecker weaponChecker = new WeaponUnlockChecker(dataProvider);
+        assertDoesNotThrow(() -> weaponChecker.check(1));
+    }
+
 }
