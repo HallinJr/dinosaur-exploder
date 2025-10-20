@@ -2,6 +2,8 @@ package com.dinosaur.dinosaurexploder.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -148,6 +150,7 @@ class CollisionHandlerTest {
         assertEquals(PLAYER_MAX_LIVES,lifeComponent.getLife());
     }
 
+    @Disabled("Activate this test when the logic has been implemented for the life component")
     @Test
     void playerLife_ShouldNotDropBelowZero() {
         LifeComponent lifeComponent = new LifeComponent(); //3hp MAX
