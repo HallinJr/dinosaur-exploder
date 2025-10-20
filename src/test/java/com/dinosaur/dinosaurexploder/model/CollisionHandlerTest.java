@@ -1,5 +1,10 @@
 package com.dinosaur.dinosaurexploder.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import com.almasb.fxgl.entity.Entity;
 import com.dinosaur.dinosaurexploder.components.BombComponent;
 import com.dinosaur.dinosaurexploder.components.CollectedCoinsComponent;
@@ -9,13 +14,9 @@ import com.dinosaur.dinosaurexploder.components.RedDinoComponent;
 import com.dinosaur.dinosaurexploder.components.ScoreComponent;
 import com.dinosaur.dinosaurexploder.utils.LevelManager;
 import com.dinosaur.dinosaurexploder.utils.MockGameTimer;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CollisionHandlerTest {
 
@@ -134,4 +135,28 @@ class CollisionHandlerTest {
 
         assertEquals(PLAYER_MAX_LIVES, lifeComponent.getLife());
     }
+
+
+    //New tests
+    @Test
+    void playGetHeartWhenMax_doseNotExceedMax() {
+        LifeComponent lifeComponent = new LifeComponent();
+        assertEquals(PLAYER_MAX_LIVES, lifeComponent.getLife());
+
+        collisionHandler.onPlayerGetHeart(lifeComponent);
+
+        assertEquals(PLAYER_MAX_LIVES,lifeComponent.getLife());
+    }
+
+    @Test
+    void playerLife_ShouldNotDropBelowZero() {
+        LifeComponent lifeComponent = new LifeComponent(); //3hp MAX
+        collisionHandler.getDamagedPlayerLife(lifeComponent); //2hp
+        collisionHandler.getDamagedPlayerLife(lifeComponent); //1hp
+        collisionHandler.getDamagedPlayerLife(lifeComponent); //0hp
+        collisionHandler.getDamagedPlayerLife(lifeComponent); //0hp? LOWEST
+
+        assertEquals(0, lifeComponent.getLife()); //Bug: Life can be negative, but should stop at zero
+    }
+
 }
