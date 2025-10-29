@@ -40,7 +40,7 @@ public class PlayerComponentTest {
         player.attachTo(entity); //Attach the mocked entity to the player
     }
 
-    @Test //Game logic not in use
+    @Test
     void invincibleModeChangesOpacity() {
         player.setInvincible(true);
 
@@ -48,7 +48,7 @@ public class PlayerComponentTest {
         verify(viewComponent).setOpacity(0.5);
     }
 
-    @Test //-||-
+    @Test
     void invincibleModeRestoresOpacity() {
         player.setInvincible(true);
         player.setInvincible(false);
